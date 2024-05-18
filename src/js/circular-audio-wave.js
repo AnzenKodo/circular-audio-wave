@@ -277,18 +277,26 @@ class CircularAudioWave {
     }
 
     play() {
-        if (this.sourceNode && this.sourceNode.buffer) {
-            this.playing = true;
-            this.presetOption();
-            this.sourceNode.start(0);
-            this._debouncedDraw();
+        this.playing = true;
+        if (this.paused) {
+            this.paused = false;
+            this.context.resume();
         } else {
-            alert('Audio is not ready');
+            if (this.sourceNode && this.sourceNode.buffer) {
+                this.presetOption();
+                this.sourceNode.start(0);
+                this._debouncedDraw();
+            } else {
+                alert('Audio is not ready');
+            }
         }
     }
-    // TODO
     pause() {
-
+        this.playing = false;
+        this.paused = true;
+        if (this.context.state === "running") {
+            this.context.suspend()
+        }
     }
     destroy() {
         this.chart.dispose();
